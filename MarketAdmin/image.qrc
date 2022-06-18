@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/shop.png</file>
+        <file>image/border1.png</file>
+        <file>image/climain.jpg</file>
+        <file>image/location.png</file>
+        <file>image/logo.png</file>
+        <file>image/oeder.png</file>
+        <file>image/watch.png</file>
+        <file>image/water.png</file>
+    </qresource>
+</RCC>

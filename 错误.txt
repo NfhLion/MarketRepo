@@ -1,0 +1,3 @@
+pure virtual method called terminate called without an active exception
+
+找了好久，才发现原因，delete一个正在使用的资源（在多线程环境下才可能发生）就会引起。

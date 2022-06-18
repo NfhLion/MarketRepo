@@ -1,0 +1,489 @@
+﻿#include "database.h"
+
+///用户校验
+int CheckUserLogin(MYSQL *mysql, const char *id, const char *passward)
+{
+    unsigned int line = 0;  //记录的行
+    MYSQL_RES *res = NULL;
+    
+    char queryString[100] = "";
+    sprintf(queryString, "select user_id, user_passward from userinfo "
+                         "where user_id = '%s' and user_passward = '%s'", id, passward);
+    printf("%s\n", queryString);
+    
+    //查询数据库中某个表的内容
+    if(mysql_real_query(mysql, queryString, strlen(queryString)) != 0)
+    {
+        printf("mysql_real_query: %s\n", strerror(mysql_errno(mysql)));
+        exit(1);
+    }
+    
+    //mysql_store_result()立即检索所有的行并提取了行，并为之分配内存，存储到客户机中
+    res = mysql_store_result(mysql);
+    if(res == NULL)
+    {
+        printf("mysql_store_result: %s\n", strerror(mysql_errno(mysql)));
+        exit(1);
+    }
+
+    if((line = mysql_num_rows(res)) == 0)
+    {
+        return 0;
+    }else
+    {
+        return 1;
+    }
+}
+
+
+///*------------------------------------------MerchantInfo----------------------------------------------*/
+//MerchantInfo *selectMerchantInfoFromID(char *str)
+//{
+//    MYSQL *mysql = getMysql();
+//    MerchantInfo *info = NULL;
+//    MYSQL_ROW row;
+
+//    unsigned int line = 0;  //记录的行
+//    int i = 0;
+//    MYSQL_RES *res = NULL;
+
+//    //组装sql语句
+//    char query_str[100] = "select * from merchantinfo where mer_id = '";
+//    strcat(query_str, str);
+//    strcat(query_str, "'");
+//    printf("%s\n", query_str);
+
+//    //查询数据库中某个表的内容
+//    if(mysql_real_query(mysql, query_str, strlen(query_str)) != 0)
+//    {
+//        printf("mysql_real_query: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    res = mysql_store_result(mysql);
+//    if(res == NULL)
+//    {
+//        printf("mysql_store_result: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    if((line = mysql_num_rows(res)) == 0)
+//    {
+//        return info;
+//    }else
+//    {
+//        info = (MerchantInfo *)malloc(sizeof(MerchantInfo) * line);
+//        if(info == NULL){
+//            printf("malloc MerchantInfo failed!\n");
+//            exit(1);
+//        }
+//    }
+
+//    while ((row = mysql_fetch_row(res)) != NULL)
+//    {
+//        strcpy(info[i].mer_id, row[0]);
+//        strcpy(info[i].mer_name, row[1]);
+//        strcpy(info[i].mer_phone, row[2]);
+//        strcpy(info[i].mer_time, row[3]);
+//        strcpy(info[i].mer_site, row[4]);
+//        strcpy(info[i].mer_image, row[5]);
+//    }
+//    return info;
+//}
+
+//MerchantInfo *selectMerchantAll(int *len)
+//{
+//    MYSQL *mysql = getMysql();
+//    MerchantInfo *info = NULL;
+//    MYSQL_ROW row;
+
+//    unsigned int line = 0;  //记录的行
+//    int i = 0;
+//    MYSQL_RES *res = NULL;
+
+//    //组装sql语句
+//    char query_str[100] = "select * from merchantinfo";
+//    printf("%s\n", query_str);
+
+//    //查询数据库中某个表的内容
+//    if(mysql_real_query(mysql, query_str, strlen(query_str)) != 0)
+//    {
+//        printf("mysql_real_query: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    res = mysql_store_result(mysql);
+//    if(res == NULL)
+//    {
+//        printf("mysql_store_result: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    if((line = mysql_num_rows(res)) == 0)
+//    {
+//        *len = line;
+//        return info;
+//    }else
+//    {
+//        info = (MerchantInfo *)malloc(sizeof(MerchantInfo) * line);
+//        if(info == NULL){
+//            printf("malloc MerchantInfo failed!\n");
+//            exit(1);
+//        }
+//    }
+
+//    while ((row = mysql_fetch_row(res)) != NULL)
+//    {
+//        strcpy(info[i].mer_id, row[0]);
+//        strcpy(info[i].mer_name, row[1]);
+//        strcpy(info[i].mer_phone, row[2]);
+//        strcpy(info[i].mer_time, row[3]);
+//        strcpy(info[i].mer_site, row[4]);
+//        strcpy(info[i].mer_image, row[5]);
+//        i++;
+//    }
+
+//    *len = line;
+//    return info;
+//}
+
+///*------------------------------------------ShopInfo----------------------------------------------*/
+//ShopInfo *selectShopInfoFromMerID(char *str, int *len)
+//{
+//    MYSQL *mysql = getMysql();
+//    MYSQL_ROW row;
+//    ShopInfo * info = NULL;
+//    unsigned int line = 0;  //记录的行
+//    int i = 0;
+//    MYSQL_RES *res = NULL;
+
+//    //组装sql语句
+//    char query_str[100] = "select * from shopinfo where sh_merid = '";
+//    strcat(query_str, str);
+//    strcat(query_str, "'");
+//    printf("%s\n", query_str);
+
+//    //查询数据库中某个表的内容
+//    if(mysql_real_query(mysql, query_str, strlen(query_str)) != 0)
+//    {
+//        printf("mysql_real_query: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    res = mysql_store_result(mysql);
+//    if(res == NULL)
+//    {
+//        printf("mysql_store_result: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    if((line = mysql_num_rows(res)) == 0)
+//    {
+//        *len = line;
+//        return info;
+//    }else
+//    {
+//        info = (ShopInfo *)malloc(sizeof(ShopInfo) * line);
+//        if(info == NULL){
+//            printf("malloc ShopInfo failed!\n");
+//            exit(1);
+//        }
+//    }
+
+//    while ((row = mysql_fetch_row(res)) != NULL)
+//    {
+//        strcpy(info[i].sh_id, row[0]);
+//        strcpy(info[i].sh_merid, row[1]);
+//        strcpy(info[i].sh_name, row[2]);
+//        strcpy(info[i].sh_type, row[3]);
+//        strcpy(info[i].sh_time, row[4]);
+//        i++;
+//    }
+
+//    *len = line;
+//    return info;
+//}
+
+//CommodityInfo *selectCommodityInfoFromShopID(char *str, int *len)
+//{
+//    MYSQL *mysql = getMysql();
+//    MYSQL_ROW row;
+//    CommodityInfo * info = NULL;
+//    unsigned int line = 0;  //记录的行
+//    int i = 0;
+//    MYSQL_RES *res = NULL;
+
+//    //组装sql语句
+//    char query_str[100] = "select * from commodityinfo where com_shopid = '";
+//    strcat(query_str, str);
+//    strcat(query_str, "'");
+//    printf("%s\n", query_str);
+
+//    //查询数据库中某个表的内容
+//    if(mysql_real_query(mysql, query_str, strlen(query_str)) != 0)
+//    {
+//        printf("mysql_real_query: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    res = mysql_store_result(mysql);
+//    if(res == NULL)
+//    {
+//        printf("mysql_store_result: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    if((line = mysql_num_rows(res)) == 0)
+//    {
+//        *len = line;
+//        return info;
+//    }else
+//    {
+//        info = (CommodityInfo *)malloc(sizeof(CommodityInfo) * line);
+//        if(info == NULL){
+//            printf("malloc CommodityInfo failed!\n");
+//            exit(1);
+//        }
+//    }
+
+//    while ((row = mysql_fetch_row(res)) != NULL)
+//    {
+//        strcpy(info[i].com_id, row[0]);
+//        strcpy(info[i].com_shopid, row[1]);
+//        strcpy(info[i].com_name, row[2]);
+//        strcpy(info[i].com_sprice, row[3]);
+//        strcpy(info[i].com_sex, row[4]);
+//        strcpy(info[i].com_image, row[5]);
+//        i++;
+//    }
+
+//    *len = line;
+//    return info;
+//}
+
+//SortInfo *selectSortInfoFromComID(char *str, int *len)
+//{
+//    MYSQL *mysql = getMysql();
+//    MYSQL_ROW row;
+//    SortInfo * info = NULL;
+//    unsigned int line = 0;  //记录的行
+//    int i = 0;
+//    MYSQL_RES *res = NULL;
+
+//    //组装sql语句
+//    char query_str[100] = "select * from sortinfo where so_comid = '";
+//    strcat(query_str, str);
+//    strcat(query_str, "'");
+//    printf("%s\n", query_str);
+
+//    //查询数据库中某个表的内容
+//    if(mysql_real_query(mysql, query_str, strlen(query_str)) != 0)
+//    {
+//        printf("mysql_real_query: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    res = mysql_store_result(mysql);
+//    if(res == NULL)
+//    {
+//        printf("mysql_store_result: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    if((line = mysql_num_rows(res)) == 0)
+//    {
+//        *len = line;
+//        return info;
+//    }else
+//    {
+//        info = (SortInfo *)malloc(sizeof(SortInfo) * line);
+//        if(info == NULL){
+//            printf("malloc SortInfo failed!\n");
+//            exit(1);
+//        }
+//    }
+
+//    while ((row = mysql_fetch_row(res)) != NULL)
+//    {
+//        strcpy(info[i].so_id, row[0]);
+//        strcpy(info[i].so_comid, row[1]);
+//        strcpy(info[i].so_bar, row[2]);
+//        strcpy(info[i].so_colour, row[3]);
+//        strcpy(info[i].so_num, row[4]);
+//        i++;
+//    }
+
+//    *len = line;
+//    return info;
+//}
+
+//FormInfo *selectFormInfoFromSoID(char *str, int *len)
+//{
+//    MYSQL *mysql = getMysql();
+//    MYSQL_ROW row;
+//    FormInfo * info = NULL;
+//    unsigned int line = 0;  //记录的行
+//    int i = 0;
+//    MYSQL_RES *res = NULL;
+
+//    //组装sql语句
+//    char query_str[100] = "select * from forminfo where fo_soid = '";
+//    strcat(query_str, str);
+//    strcat(query_str, "'");
+//    printf("%s\n", query_str);
+
+//    //查询数据库中某个表的内容
+//    if(mysql_real_query(mysql, query_str, strlen(query_str)) != 0)
+//    {
+//        printf("mysql_real_query: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    res = mysql_store_result(mysql);
+//    if(res == NULL)
+//    {
+//        printf("mysql_store_result: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    if((line = mysql_num_rows(res)) == 0)
+//    {
+//        *len = line;
+//        return info;
+//    }else
+//    {
+//        info = (FormInfo *)malloc(sizeof(FormInfo) * line);
+//        if(info == NULL){
+//            printf("malloc FormInfo failed!\n");
+//            exit(1);
+//        }
+//    }
+
+//    while ((row = mysql_fetch_row(res)) != NULL)
+//    {
+//        strcpy(info[i].fo_id, row[0]);
+//        strcpy(info[i].fo_comid, row[1]);
+//        strcpy(info[i].fo_cliid, row[2]);
+//        strcpy(info[i].fo_soid, row[3]);
+//        strcpy(info[i].fo_time, row[4]);
+//        strcpy(info[i].fo_num, row[5]);
+//        i++;
+//    }
+
+//    *len = line;
+//    return info;
+//}
+
+//FormInfo *selectFormInfoFromCliID(char *str, int *len)
+//{
+//    MYSQL *mysql = getMysql();
+//    MYSQL_ROW row;
+//    FormInfo * info = NULL;
+//    unsigned int line = 0;  //记录的行
+//    int i = 0;
+//    MYSQL_RES *res = NULL;
+
+//    //组装sql语句
+//    char query_str[100] = "select * from forminfo where fo_cliid = '";
+//    strcat(query_str, str);
+//    strcat(query_str, "'");
+//    printf("%s\n", query_str);
+
+//    //查询数据库中某个表的内容
+//    if(mysql_real_query(mysql, query_str, strlen(query_str)) != 0)
+//    {
+//        printf("mysql_real_query: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    res = mysql_store_result(mysql);
+//    if(res == NULL)
+//    {
+//        printf("mysql_store_result: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    if((line = mysql_num_rows(res)) == 0)
+//    {
+//        *len = line;
+//        return info;
+//    }else
+//    {
+//        info = (FormInfo *)malloc(sizeof(FormInfo) * line);
+//        if(info == NULL){
+//            printf("malloc FormInfo failed!\n");
+//            exit(1);
+//        }
+//    }
+
+//    while ((row = mysql_fetch_row(res)) != NULL)
+//    {
+//        strcpy(info[i].fo_id, row[0]);
+//        strcpy(info[i].fo_comid, row[1]);
+//        strcpy(info[i].fo_cliid, row[2]);
+//        strcpy(info[i].fo_soid, row[3]);
+//        strcpy(info[i].fo_time, row[4]);
+//        strcpy(info[i].fo_num, row[5]);
+//        i++;
+//    }
+
+//    *len = line;
+//    return info;
+//}
+
+///*------------------------------------------ClientInfo----------------------------------------------*/
+//ClientInfo *selectClientInfoFromID(char *str)
+//{
+//    MYSQL *mysql = getMysql();
+//    ClientInfo *info = NULL;
+//    MYSQL_ROW row;
+
+//    unsigned int line = 0;  //记录的行
+//    int i = 0;
+//    MYSQL_RES *res = NULL;
+
+//    //组装sql语句
+//    char query_str[100] = "select * from clientinfo where cli_id = '";
+//    strcat(query_str, str);
+//    strcat(query_str, "'");
+//    printf("%s\n", query_str);
+
+//    //查询数据库中某个表的内容
+//    if(mysql_real_query(mysql, query_str, strlen(query_str)) != 0)
+//    {
+//        printf("mysql_real_query: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    res = mysql_store_result(mysql);
+//    if(res == NULL)
+//    {
+//        printf("mysql_store_result: %s\n", strerror(mysql_errno(mysql)));
+//        exit(1);
+//    }
+
+//    if((line = mysql_num_rows(res)) == 0)
+//    {
+//        return info;
+//    }else
+//    {
+//        info = (ClientInfo *)malloc(sizeof(ClientInfo) * line);
+//        if(info == NULL){
+//            printf("malloc ClientInfo failed!\n");
+//            exit(1);
+//        }
+//    }
+
+//    while ((row = mysql_fetch_row(res)) != NULL)
+//    {
+//        strcpy(info[i].cli_id, row[0]);
+//        strcpy(info[i].cli_name, row[1]);
+//        strcpy(info[i].cli_phone, row[2]);
+//        strcpy(info[i].cli_time, row[3]);
+//        strcpy(info[i].cli_site, row[4]);
+//        strcpy(info[i].cli_image, row[5]);
+//    }
+//    return info;
+//}
+
+

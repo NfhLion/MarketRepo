@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/shop.png</file>
+        <file>image/whiteGolden.png</file>
+        <file>image/diamond.png</file>
+        <file>image/pay_0.png</file>
+        <file>image/pay_1.png</file>
+        <file>image/pay_2.png</file>
+        <file>image/watch.png</file>
+        <file>image/climain.jpg</file>
+        <file>image/water.png</file>
+        <file>image/border1.png</file>
+        <file>image/logo.png</file>
+        <file>image/logo0.png</file>
+    </qresource>
+</RCC>
